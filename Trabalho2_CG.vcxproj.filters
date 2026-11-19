@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Arquivos de Origem"><UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier></Filter>
+    <Filter Include="Arquivos de Cabeçalho"><UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier></Filter>
+    <Filter Include="Bibliotecas Externas\freeglut"><UniqueIdentifier>{A1B2C3D4-1111-4A4A-9A9A-000000000001}</UniqueIdentifier></Filter>
+    <Filter Include="Bibliotecas Externas\glui"><UniqueIdentifier>{A1B2C3D4-2222-4A4A-9A9A-000000000002}</UniqueIdentifier></Filter>
+    <Filter Include="Bibliotecas Externas"><UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier></Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Cena.cpp"><Filter>Arquivos de Origem</Filter></ClCompile>
+    <ClCompile Include="src\Geometria.cpp"><Filter>Arquivos de Origem</Filter></ClCompile>
+    <ClCompile Include="src\Interface.cpp"><Filter>Arquivos de Origem</Filter></ClCompile>
+    <ClCompile Include="src\ObjLoader.cpp"><Filter>Arquivos de Origem</Filter></ClCompile>
+    <ClCompile Include="src\Render.cpp"><Filter>Arquivos de Origem</Filter></ClCompile>
+    <ClCompile Include="src\Textura.cpp"><Filter>Arquivos de Origem</Filter></ClCompile>
+    <ClCompile Include="src\main.cpp"><Filter>Arquivos de Origem</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_callbacks.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_cursor.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_display.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_ext.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_font.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_font_data.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_gamemode.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_geometry.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_gl2.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_init.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_input_devices.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_joystick.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_main.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_menu.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_misc.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_overlay.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_spaceball.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_state.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_stroke_mono_roman.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_stroke_roman.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_structure.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_teapot.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_videoresize.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\fg_window.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\mswin\fg_cmap_mswin.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\mswin\fg_cursor_mswin.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\mswin\fg_display_mswin.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\mswin\fg_ext_mswin.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\mswin\fg_gamemode_mswin.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\mswin\fg_init_mswin.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\mswin\fg_input_devices_mswin.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\mswin\fg_joystick_mswin.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\mswin\fg_main_mswin.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\mswin\fg_menu_mswin.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\mswin\fg_spaceball_mswin.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\mswin\fg_state_mswin.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\mswin\fg_structure_mswin.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\mswin\fg_window_mswin.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\freeglut\src\util\xparsegeometry_repl.c"><Filter>Bibliotecas Externas\freeglut</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\algebra3.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\arcball.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_add_controls.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_bitmaps.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_button.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_checkbox.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_column.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_commandline.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_control.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_edittext.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_filebrowser.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_checkbox_0.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_checkbox_0_dis.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_checkbox_1.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_checkbox_1_dis.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_downarrow.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_leftarrow.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_listbox_down.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_listbox_up.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_listbox_up_dis.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_radiobutton_0.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_radiobutton_0_dis.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_radiobutton_1.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_radiobutton_1_dis.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_rightarrow.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_spindown_0.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_spindown_1.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_spindown_dis.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_spinup_0.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_spinup_1.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_spinup_dis.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_img_uparrow.c"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_list.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_listbox.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_mouse_iaction.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_node.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_panel.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_radio.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_rollout.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_rotation.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_scrollbar.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_separator.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_spinner.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_statictext.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_textbox.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_translation.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_tree.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_treepanel.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\glui_window.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\quaternion.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+    <ClCompile Include="third_party\glui\src\viewmodel.cpp"><Filter>Bibliotecas Externas\glui</Filter></ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Common.h"><Filter>Arquivos de Cabeçalho</Filter></ClInclude>
+    <ClInclude Include="src\Geometria.h"><Filter>Arquivos de Cabeçalho</Filter></ClInclude>
+    <ClInclude Include="src\Interface.h"><Filter>Arquivos de Cabeçalho</Filter></ClInclude>
+    <ClInclude Include="src\ObjLoader.h"><Filter>Arquivos de Cabeçalho</Filter></ClInclude>
+    <ClInclude Include="src\Render.h"><Filter>Arquivos de Cabeçalho</Filter></ClInclude>
+    <ClInclude Include="src\Textura.h"><Filter>Arquivos de Cabeçalho</Filter></ClInclude>
+    <ClInclude Include="third_party\stb_image.h"><Filter>Bibliotecas Externas</Filter></ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bibliotecas.props" />
+    <None Include="README.md" />
+  </ItemGroup>
+</Project>

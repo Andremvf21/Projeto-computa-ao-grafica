@@ -1,0 +1,30 @@
+# ---- Visual Studio ----
+.vs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+Win32/
+[Oo]ut/
+*.user
+*.suo
+*.VC.db
+*.VC.opendb
+*.ipch
+*.pdb
+*.ilk
+*.idb
+*.tlog
+*.log
+*.iobj
+*.ipdb
+*.exp
+
+# Arquivos-objeto do compilador (.obj) ficam fora...
+*.obj
+# ...MAS os modelos 3D .obj da pasta assets precisam entrar no repositório!
+!assets/**/*.obj
+
+# ---- Sistema ----
+Thumbs.db
+.DS_Store
