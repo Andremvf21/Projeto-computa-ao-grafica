@@ -1,1 +1,1 @@
-# Projeto-computa-ao-grafica
+# Projeto-computação-gráfica
