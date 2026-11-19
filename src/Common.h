@@ -108,7 +108,9 @@ struct Objeto3D {
 // -----------------------------------------------------------------------------
 struct Luz {
     bool  ligada  = true;
-    float pos[4]  = { 2.0f, 4.0f, 3.0f, 1.0f };  // w = 1 -> luz pontual
+    // w = 1 -> luz pontual. (2,2,2) aparece no canto da tela com a câmera
+    // padrão, então a esfera que indica a luz já fica visível ao abrir.
+    float pos[4]  = { 2.0f, 2.0f, 2.0f, 1.0f };
 };
 
 struct Camera {
