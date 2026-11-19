@@ -16,6 +16,16 @@
 #include <string>
 #include <vector>
 
+// O gl.h do Windows é da versão 1.1 e não traz estas constantes do OpenGL 1.2.
+// Os drivers atuais aceitam os valores normalmente (requisito 3c: o brilho
+// especular continua visível por cima da textura).
+#ifndef GL_LIGHT_MODEL_COLOR_CONTROL
+#define GL_LIGHT_MODEL_COLOR_CONTROL 0x81F8
+#endif
+#ifndef GL_SEPARATE_SPECULAR_COLOR
+#define GL_SEPARATE_SPECULAR_COLOR   0x81FA
+#endif
+
 // -----------------------------------------------------------------------------
 // Vetores
 // -----------------------------------------------------------------------------
@@ -46,7 +56,7 @@ inline Vec3  cross(const Vec3& a, const Vec3& b) { return { a.y * b.z - a.z * b.
 inline float dot(const Vec3& a, const Vec3& b)   { return a.x * b.x + a.y * b.y + a.z * b.z; }
 
 // -----------------------------------------------------------------------------
-// Malha (preenchida pelo parser OBJ ou pela geração procedural)
+// Malha (preenchida pelo parser OBJ)
 // -----------------------------------------------------------------------------
 struct Triangulo {
     int  v[3]  = { 0, 0, 0 };     // índices em Malha::vertices
@@ -73,8 +83,6 @@ struct Malha {
 // -----------------------------------------------------------------------------
 enum Shading    { SHADING_FLAT = 0, SHADING_SMOOTH = 1 };
 enum ModoVisual { MODO_SOLIDO = 0, MODO_TEXTURA = 1, MODO_REFLEXAO = 2 };
-enum TipoUV     { UV_ESFERICA = 0, UV_CILINDRICA = 1, UV_PLANAR = 2 };
-enum Preset     { PRESET_VIDRO = 0, PRESET_CROMO = 1, PRESET_FOSCO = 2, PRESET_TEXTURA = 3 };
 
 struct Material {
     float ambiente[4]  = { 0.2f, 0.2f, 0.2f, 1.0f };
@@ -85,7 +93,7 @@ struct Material {
 };
 
 // -----------------------------------------------------------------------------
-// Objeto da cena (a cena aceita N objetos)
+// Objeto exibido
 // -----------------------------------------------------------------------------
 struct Objeto3D {
     std::string nome = "objeto";
@@ -93,14 +101,8 @@ struct Objeto3D {
     Material    mat;
     Shading     shading = SHADING_SMOOTH;
     ModoVisual  modo    = MODO_SOLIDO;
-    TipoUV      tipoUV  = UV_ESFERICA;
     GLuint      textura = 0;          // 0 = sem textura carregada
-
-    float pos[3] = { 0, 0, 0 };
-    float rot[3] = { 0, 0, 0 };       // graus em X, Y, Z
-    float escala = 1.0f;
-    bool  visivel = true;
-    bool  removivel = true;           // a mesa é fixa (false)
+    int         cor     = 0;          // índice em CORES (Textura.h), cor do modo Sólido
 };
 
 // -----------------------------------------------------------------------------
@@ -120,6 +122,7 @@ struct Camera {
 };
 
 // Definidos em Cena.cpp
+// g_cena guarda o objeto aberto (no máximo um: abrir outro .obj substitui).
 extern std::vector<Objeto3D> g_cena;
 extern int    g_idSelecionado;
 extern Luz    g_luz;
@@ -135,4 +138,3 @@ inline Objeto3D* objetoSelecionado() {
 // Constantes da janela (requisito 2b: mínimo 600x600)
 constexpr int JANELA_LARGURA = 1000;
 constexpr int JANELA_ALTURA  = 700;
-constexpr float ALTURA_MESA  = 0.0f;  // y do tampo da mesa; objetos nascem aqui

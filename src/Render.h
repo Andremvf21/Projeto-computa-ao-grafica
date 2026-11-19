@@ -14,6 +14,6 @@ void desenharIndicadorLuz(const Luz& luz);
 // Desenha um objeto com seu material, shading e modo de visualização.
 void desenharObjeto(const Objeto3D& obj);
 
-// Opacos primeiro; depois transparentes ordenados do mais longe ao mais perto,
-// com GL_BLEND e glDepthMask(GL_FALSE).
+// Desenha o objeto aberto. Se ele estiver transparente, usa GL_BLEND,
+// glDepthMask(GL_FALSE) e triângulos do mais longe ao mais perto.
 void desenharCena();

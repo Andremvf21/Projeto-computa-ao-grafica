@@ -82,7 +82,22 @@ void liberarTextura(GLuint& id) {
 }
 
 bool ligarTextura(const Objeto3D& obj) {
-    // TODO (Sprint 2): MODO_REFLEXAO com g_texSphereMap e glTexGen.
+    // Reflexão de ambiente (requisito 3c): o sphere map é uma foto de uma bola
+    // espelhada. Com GL_SPHERE_MAP, o OpenGL calcula a coordenada de textura de
+    // cada vértice a partir da normal e da direção da câmera, então a imagem
+    // "escorrega" pela superfície quando a câmera gira, como um reflexo.
+    if (obj.modo == MODO_REFLEXAO) {
+        if (g_texSphereMap == 0) { glDisable(GL_TEXTURE_2D); return false; }
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, g_texSphereMap);
+        glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+        glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+        glEnable(GL_TEXTURE_GEN_S);
+        glEnable(GL_TEXTURE_GEN_T);
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        return true;
+    }
+
     bool usar = obj.modo == MODO_TEXTURA && obj.textura != 0 && !obj.malha.uvs.empty();
     if (!usar) {
         glDisable(GL_TEXTURE_2D);
@@ -98,6 +113,8 @@ bool ligarTextura(const Objeto3D& obj) {
 }
 
 void desligarTextura() {
+    glDisable(GL_TEXTURE_GEN_S);
+    glDisable(GL_TEXTURE_GEN_T);
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisable(GL_TEXTURE_2D);
 }
@@ -108,7 +125,26 @@ void enviarUV(const Malha& m, const Triangulo& t, int i) {
         glTexCoord2f(m.uvs[k].u, m.uvs[k].v);
 }
 
-void aplicarPreset(Objeto3D& obj, Preset p) {
-    // TODO (Sprint 2): valores finais de cada preset
-    (void)obj; (void)p;
+// -----------------------------------------------------------------------------
+// Cor do modo Sólido
+// -----------------------------------------------------------------------------
+const CorNomeada CORES[] = {
+    { "Cinza",      0.80f, 0.80f, 0.80f },
+    { "Branco",     1.00f, 1.00f, 1.00f },
+    { "Laranja",    0.95f, 0.58f, 0.25f },
+    { "Vermelho",   0.85f, 0.15f, 0.15f },
+    { "Azul",       0.25f, 0.45f, 0.90f },
+    { "Verde",      0.30f, 0.75f, 0.35f },
+    { "Rosa",       0.96f, 0.56f, 0.70f },
+};
+const int NUM_CORES = (int)(sizeof(CORES) / sizeof(CORES[0]));
+
+void aplicarCor(Objeto3D& obj, int indiceCor) {
+    if (indiceCor < 0 || indiceCor >= NUM_CORES) return;
+    const CorNomeada& c = CORES[indiceCor];
+    obj.cor = indiceCor;
+    obj.mat.difusa[0] = c.r;  obj.mat.difusa[1] = c.g;  obj.mat.difusa[2] = c.b;
+    // A ambiente acompanha a cor (mais escura): o lado na sombra continua
+    // com o tom do objeto em vez de ficar cinza.
+    obj.mat.ambiente[0] = c.r * 0.25f;  obj.mat.ambiente[1] = c.g * 0.25f;  obj.mat.ambiente[2] = c.b * 0.25f;
 }

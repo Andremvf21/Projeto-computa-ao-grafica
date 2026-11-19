@@ -1,5 +1,5 @@
 // =============================================================================
-//  Textura — imagens, sphere map e presets de material
+//  Textura — imagens, sphere map e cor do material
 //  Responsável: Ana Beatriz          Requisitos: 3c (reflexão), 3d (textura)
 // =============================================================================
 #pragma once
@@ -15,9 +15,10 @@ GLuint carregarTextura(const std::string& caminho, std::string& erro);
 void liberarTextura(GLuint& id);
 
 // --- Uso no desenho (Render.cpp) ---------------------------------------------
-// ligarTextura: ativa a textura do objeto se ele estiver no modo texturizado,
-// tiver textura carregada e tiver UV. Retorna true se ativou; nesse caso,
-// chame enviarUV() antes de cada glVertex e desligarTextura() no fim.
+// ligarTextura: no modo Texturizado, ativa a textura do objeto (se houver
+// textura e UV); no modo Reflexão, ativa o sphere map (g_texSphereMap) com
+// geração automática de coordenadas (glTexGen). Retorna true se ativou; nesse
+// caso, chame enviarUV() antes de cada glVertex e desligarTextura() no fim.
 bool ligarTextura(const Objeto3D& obj);
 void desligarTextura();
 
@@ -25,5 +26,10 @@ void desligarTextura();
 // Não faz nada se esse vértice não tiver coordenada de textura.
 void enviarUV(const Malha& m, const Triangulo& t, int i);
 
-// Aplica um preset ao objeto (material + modo de visualização).
-void aplicarPreset(Objeto3D& obj, Preset p);
+// --- Cor do modo Sólido -------------------------------------------------------
+// Lista "Cor" do painel. Muda a difusa e a ambiente do material, mantendo a
+// opacidade.
+struct CorNomeada { const char* nome; float r, g, b; };
+extern const CorNomeada CORES[];
+extern const int NUM_CORES;
+void aplicarCor(Objeto3D& obj, int indiceCor);

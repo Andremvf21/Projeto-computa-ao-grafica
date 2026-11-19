@@ -119,7 +119,7 @@ bool carregarOBJ(const std::string& caminho, Malha& saida, std::string& erro) {
 
     normalizarMalha(m);
     calcularNormais(m);
-    if (!m.temUVdoArquivo) gerarUV(m, UV_ESFERICA);
+    if (!m.temUVdoArquivo) gerarUV(m);
 
     saida = std::move(m);
     erro.clear();

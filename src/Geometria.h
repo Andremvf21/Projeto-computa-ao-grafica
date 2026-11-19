@@ -1,6 +1,6 @@
 // =============================================================================
-//  Geometria — normais, coordenadas de textura e malhas procedurais
-//  Responsável: Artur Uchôa          Requisitos: 3a, 3d e a cena (mesa e bola)
+//  Geometria — normais e coordenadas de textura
+//  Responsável: Artur Uchôa          Requisitos: 3a e 3d
 // =============================================================================
 #pragma once
 #include "Common.h"
@@ -11,11 +11,5 @@ void normalizarMalha(Malha& m);
 // Calcula Triangulo::normalFace (Flat) e Malha::normaisVertice (Smooth, média).
 void calcularNormais(Malha& m);
 
-// Gera Malha::uvs quando o .obj não tem 'vt' (esférica, cilíndrica ou planar).
-void gerarUV(Malha& m, TipoUV tipo);
-
-// Esfera por latitude/longitude, já com normais e UV (a bola da cena).
-void criarEsfera(Malha& m, float raio, int fatias, int pilhas);
-
-// Mesa: tampo + 4 pernas (caixas), com UV planar para a textura de madeira.
-void criarMesa(Malha& m, float largura, float profundidade, float altura);
+// Gera Malha::uvs (projeção esférica) quando o .obj não tem 'vt' (requisito 3d).
+void gerarUV(Malha& m);

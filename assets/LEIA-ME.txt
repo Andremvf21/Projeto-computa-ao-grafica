@@ -4,7 +4,5 @@ assets/modelos/   -> arquivos .obj
   teste_toro_sem_vt.obj   (teste do parser: so v e f, faces em QUADS, sem vt)
 
 assets/texturas/  -> imagens
-  madeira.png   (provisoria, gerada por script — trocar por uma foto se quiser)
-  la.png        (provisoria — bola de la)
   spheremap.png (provisoria — reflexao de ambiente, requisito 3c)
   gato_pelo.png (textura do gato: listras, olhos, nariz e laco rosa)

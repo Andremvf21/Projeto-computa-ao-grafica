@@ -6,20 +6,34 @@
 #include "Common.h"
 #include "Interface.h"
 #include "Render.h"
+#include "Textura.h"
 #include <GL/glui.h>
 #include <algorithm>
+#include <cstdio>
 
-// Enquanto nenhum modelo foi aberto, mostra um bule para a tela não ficar vazia.
-static void desenharPlaceholder() {
-    GLfloat cor[] = { 0.9f, 0.55f, 0.25f, 1.0f };
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, cor);
-    glShadeModel(GL_SMOOTH);
-    glutSolidTeapot(1.0);
+// Fundo em degradê (azul-acinzentado em cima, quase branco embaixo): um
+// retângulo do tamanho da tela, desenhado antes de tudo e sem profundidade.
+static void desenharFundo() {
+    glPushAttrib(GL_ENABLE_BIT | GL_LIGHTING_BIT | GL_CURRENT_BIT);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_2D);
+    glShadeModel(GL_SMOOTH);   // interpola as cores entre os cantos
+    glMatrixMode(GL_PROJECTION); glPushMatrix(); glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);  glPushMatrix(); glLoadIdentity();
+    glBegin(GL_QUADS);
+    glColor3f(0.97f, 0.96f, 0.94f); glVertex2f(-1, -1); glVertex2f(1, -1);
+    glColor3f(0.78f, 0.84f, 0.92f); glVertex2f(1, 1);   glVertex2f(-1, 1);
+    glEnd();
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION); glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopAttrib();
 }
 
 static void display() {
-    glClearColor(0.93f, 0.91f, 0.87f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    desenharFundo();
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -29,9 +43,7 @@ static void display() {
 
     configurarLuz(g_luz);  // depois da câmera: a luz fica fixa no mundo
     desenharIndicadorLuz(g_luz);
-
-    if (g_cena.empty()) desenharPlaceholder();
-    else                desenharCena();
+    desenharCena();
 
     glutSwapBuffers();
 }
@@ -105,6 +117,13 @@ int main(int argc, char** argv) {
     g_janela = glutCreateWindow("Trabalho 2 - Visualizador 3D");
 
     inicializarGL();
+
+    // Imagem do ambiente para a reflexão (requisito 3c). Carregada depois de
+    // criar a janela: a textura vai para o contexto OpenGL dela.
+    std::string erro;
+    g_texSphereMap = carregarTextura("assets/texturas/spheremap.png", erro);
+    if (g_texSphereMap == 0) std::printf("Aviso: %s\n", erro.c_str());
+
     glutDisplayFunc(display);
     glutMotionFunc(movimento);
     // Com GLUI, os callbacks de reshape, mouse, teclado e idle são registrados
