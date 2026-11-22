@@ -1,34 +1,16 @@
-// =============================================================================
-//  Textura — imagens, sphere map e cor do material
-//  Responsável: Ana Beatriz          Requisitos: 3c (reflexão), 3d (textura)
-// =============================================================================
+// Textura.h — imagens, sphere map e cor do material
 #pragma once
 #include "Common.h"
 
-// Carrega .png/.jpg/.bmp com stb_image e devolve o id OpenGL (0 se falhar).
-// Pode ser chamada de dentro de um callback da GLUI: a textura é criada no
-// contexto da janela principal mesmo assim.
+// Carrega .png/.jpg/.bmp e devolve o id OpenGL (0 se falhar).
 GLuint carregarTextura(const std::string& caminho, std::string& erro);
 
-// Apaga a textura da memória de vídeo e zera o id
-// (usar ao trocar a textura de um objeto ou ao remover o objeto).
-void liberarTextura(GLuint& id);
-
-// --- Uso no desenho (Render.cpp) ---------------------------------------------
-// ligarTextura: no modo Texturizado, ativa a textura do objeto (se houver
-// textura e UV); no modo Reflexão, ativa o sphere map (g_texSphereMap) com
-// geração automática de coordenadas (glTexGen). Retorna true se ativou; nesse
-// caso, chame enviarUV() antes de cada glVertex e desligarTextura() no fim.
+// Ativa a textura ou o sphere map conforme o modo. Retorna true se ativou.
 bool ligarTextura(const Objeto3D& obj);
 void desligarTextura();
 
-// Envia glTexCoord2f do vértice i (0, 1 ou 2) do triângulo.
-// Não faz nada se esse vértice não tiver coordenada de textura.
 void enviarUV(const Malha& m, const Triangulo& t, int i);
 
-// --- Cor do modo Sólido -------------------------------------------------------
-// Lista "Cor" do painel. Muda a difusa e a ambiente do material, mantendo a
-// opacidade.
 struct CorNomeada { const char* nome; float r, g, b; };
 extern const CorNomeada CORES[];
 extern const int NUM_CORES;

@@ -1,4 +1,4 @@
-// Cena.cpp — estado global compartilhado (declarado em Common.h)
+// Cena.cpp — estado global
 #include "Common.h"
 
 std::vector<Objeto3D> g_cena;

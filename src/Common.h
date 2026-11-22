@@ -1,10 +1,4 @@
-// =============================================================================
-//  Common.h — "contrato" de estruturas compartilhadas por toda a equipe
-//  Trabalho 2 de Computação Gráfica (UNICAP) — Visualizador de Objetos 3D
-//
-//  Regra da equipe: qualquer mudança neste arquivo é combinada no grupo antes
-//  do push, porque todos os módulos dependem dele.
-// =============================================================================
+// Common.h — estruturas compartilhadas
 #pragma once
 
 #ifdef _WIN32
@@ -16,9 +10,7 @@
 #include <string>
 #include <vector>
 
-// O gl.h do Windows é da versão 1.1 e não traz estas constantes do OpenGL 1.2.
-// Os drivers atuais aceitam os valores normalmente (requisito 3c: o brilho
-// especular continua visível por cima da textura).
+// Constantes do OpenGL 1.2, ausentes no gl.h do Windows
 #ifndef GL_LIGHT_MODEL_COLOR_CONTROL
 #define GL_LIGHT_MODEL_COLOR_CONTROL 0x81F8
 #endif
@@ -26,9 +18,6 @@
 #define GL_SEPARATE_SPECULAR_COLOR   0x81FA
 #endif
 
-// -----------------------------------------------------------------------------
-// Vetores
-// -----------------------------------------------------------------------------
 struct Vec2 {
     float u = 0, v = 0;
     Vec2() = default;
@@ -53,34 +42,24 @@ struct Vec3 {
 };
 
 inline Vec3  cross(const Vec3& a, const Vec3& b) { return { a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x }; }
-inline float dot(const Vec3& a, const Vec3& b)   { return a.x * b.x + a.y * b.y + a.z * b.z; }
 
-// -----------------------------------------------------------------------------
-// Malha (preenchida pelo parser OBJ)
-// -----------------------------------------------------------------------------
 struct Triangulo {
     int  v[3]  = { 0, 0, 0 };     // índices em Malha::vertices
-    int  vt[3] = { -1, -1, -1 };  // índices em Malha::uvs (-1 = sem coordenada)
-    Vec3 normalFace;              // usada no Flat Shading (requisito 3a)
+    int  vt[3] = { -1, -1, -1 };  // índices em Malha::uvs (-1 = sem UV)
+    Vec3 normalFace;              // Flat
 };
 
 struct Malha {
     std::vector<Vec3>      vertices;
-    std::vector<Vec3>      normaisVertice;  // média das faces vizinhas (Smooth, 3a)
-    std::vector<Vec2>      uvs;             // vindas do 'vt' ou geradas (3d)
+    std::vector<Vec3>      normaisVertice;  // Smooth
+    std::vector<Vec2>      uvs;
     std::vector<Triangulo> triangulos;
 
-    bool  temUVdoArquivo = false;  // true se o .obj trouxe 'vt'
-    Vec3  centro;                  // após normalizar: (0,0,0)
-    float raio = 1.0f;             // raio da esfera envolvente
+    bool  temUVdoArquivo = false;
 
     int numTriangulos() const { return (int)triangulos.size(); }
-    void limpar() { *this = Malha(); }
 };
 
-// -----------------------------------------------------------------------------
-// Material e modos de visualização
-// -----------------------------------------------------------------------------
 enum Shading    { SHADING_FLAT = 0, SHADING_SMOOTH = 1 };
 enum ModoVisual { MODO_SOLIDO = 0, MODO_TEXTURA = 1, MODO_REFLEXAO = 2 };
 
@@ -88,31 +67,23 @@ struct Material {
     float ambiente[4]  = { 0.2f, 0.2f, 0.2f, 1.0f };
     float difusa[4]    = { 0.8f, 0.8f, 0.8f, 1.0f };
     float especular[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    float shininess    = 32.0f;  // 0..128 (requisito 3c)
-    float alpha        = 1.0f;   // 0..1   (requisito 3b)
+    float shininess    = 32.0f;  // 0..128
+    float alpha        = 1.0f;   // 0..1
 };
 
-// -----------------------------------------------------------------------------
-// Objeto exibido
-// -----------------------------------------------------------------------------
 struct Objeto3D {
     std::string nome = "objeto";
     Malha       malha;
     Material    mat;
     Shading     shading = SHADING_SMOOTH;
     ModoVisual  modo    = MODO_SOLIDO;
-    GLuint      textura = 0;          // 0 = sem textura carregada
-    int         cor     = 0;          // índice em CORES (Textura.h), cor do modo Sólido
+    GLuint      textura = 0;          // 0 = sem textura
+    int         cor     = 0;          // índice em CORES
 };
 
-// -----------------------------------------------------------------------------
-// Luz e estado global
-// -----------------------------------------------------------------------------
 struct Luz {
     bool  ligada  = true;
-    // w = 1 -> luz pontual. (2,2,2) aparece no canto da tela com a câmera
-    // padrão, então a esfera que indica a luz já fica visível ao abrir.
-    float pos[4]  = { 2.0f, 2.0f, 2.0f, 1.0f };
+    float pos[4]  = { 2.0f, 2.0f, 2.0f, 1.0f };  // w = 1: luz pontual
 };
 
 struct Camera {
@@ -121,8 +92,7 @@ struct Camera {
     float fov  = 45.0f;
 };
 
-// Definidos em Cena.cpp
-// g_cena guarda o objeto aberto (no máximo um: abrir outro .obj substitui).
+// Definidos em Cena.cpp. g_cena guarda no máximo um objeto.
 extern std::vector<Objeto3D> g_cena;
 extern int    g_idSelecionado;
 extern Luz    g_luz;
@@ -135,6 +105,5 @@ inline Objeto3D* objetoSelecionado() {
     return &g_cena[g_idSelecionado];
 }
 
-// Constantes da janela (requisito 2b: mínimo 600x600)
 constexpr int JANELA_LARGURA = 1000;
 constexpr int JANELA_ALTURA  = 700;

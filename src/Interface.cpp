@@ -1,6 +1,5 @@
 // Interface.cpp — painel GLUI e diálogos de arquivo
-// Obs.: a GLUI não exibe acentos, e o MessageBoxA também não com o código
-// compilado em UTF-8. Por isso os textos que aparecem na tela ficam sem acento.
+// Textos da tela sem acento: a GLUI e o MessageBoxA não os exibem
 #include "Interface.h"
 #include "ObjLoader.h"
 #include "Geometria.h"
@@ -17,7 +16,7 @@ namespace {
 
 // Aparência do painel
 const int LARGURA_BOTAO = 190;
-const unsigned char COR_FUNDO[3] = { 226, 229, 234 };   // cinza-azulado claro
+const unsigned char COR_FUNDO[3] = { 226, 229, 234 };
 
 GLUI*            g_glui       = nullptr;
 GLUI_StaticText* g_txtNome    = nullptr;
@@ -27,16 +26,12 @@ GLUI_StaticText* g_txtTextura = nullptr;
 GLUI_StaticText* g_txtAlfa    = nullptr;
 GLUI_StaticText* g_txtBrilho  = nullptr;
 
-// Texturas da pasta assets/texturas (um botão para cada uma) e cache das que
-// já foram enviadas ao OpenGL: clicar de novo no mesmo botão não recarrega
-// a imagem nem ocupa mais memória de vídeo.
-std::vector<std::string>      g_arquivosTextura;   // caminhos, na ordem dos botões
-std::map<std::string, GLuint> g_cacheTexturas;     // caminho -> id OpenGL
+// Texturas da pasta (um botão cada) e cache das já carregadas
+std::vector<std::string>      g_arquivosTextura;
+std::map<std::string, GLuint> g_cacheTexturas;
 std::string                   g_nomeTexturaAtual;
 
-// Variáveis "vivas": a GLUI escreve nelas quando o usuário mexe no controle.
-// Os callbacks passam o valor para o objeto, e sincronizarPainel() faz o
-// caminho inverso quando um modelo novo é aberto.
+// Variáveis "vivas": a GLUI escreve nelas quando o controle muda
 int   s_shading   = SHADING_SMOOTH;
 int   s_modo      = MODO_SOLIDO;
 int   s_cor       = 0;
@@ -45,8 +40,7 @@ float s_brilho    = 32.0f;
 int   s_luzLigada = 1;
 
 void redesenhar() {
-    // Os callbacks rodam com o painel como janela atual. glutPostWindowRedisplay
-    // pede o redesenho da janela principal sem precisar trocar de janela.
+    // Redesenha a janela principal a partir do callback do painel
     glutPostWindowRedisplay(g_janela);
 }
 
@@ -60,7 +54,7 @@ std::string nomeDoArquivo(const std::string& caminho, size_t maximo = 22) {
     std::string nome = (barra == std::string::npos) ? caminho : caminho.substr(barra + 1);
     size_t ponto = nome.find_last_of('.');
     if (ponto != std::string::npos) nome = nome.substr(0, ponto);
-    if (nome.size() > maximo) nome = nome.substr(0, maximo);   // não alarga o painel
+    if (nome.size() > maximo) nome = nome.substr(0, maximo);
     return nome;
 }
 
@@ -70,7 +64,7 @@ std::string formatar(const char* rotulo, float valor, int casas) {
     return buf;
 }
 
-// Lista as imagens de assets/texturas (menos o sphere map, que é da reflexão).
+// Lista as imagens de assets/texturas, exceto o sphere map
 void listarTexturas() {
     g_arquivosTextura.clear();
     const char* extensoes[] = { "*.png", "*.jpg", "*.jpeg", "*.bmp" };
@@ -88,7 +82,7 @@ void listarTexturas() {
         FindClose(h);
     }
     std::sort(g_arquivosTextura.begin(), g_arquivosTextura.end());
-    if (g_arquivosTextura.size() > 8) g_arquivosTextura.resize(8);   // o painel tem altura limitada
+    if (g_arquivosTextura.size() > 8) g_arquivosTextura.resize(8);
 }
 
 void atualizarInfo() {
@@ -107,8 +101,7 @@ void atualizarInfo() {
     g_txtBrilho->set_text(formatar("Shininess", s_brilho, 0).c_str());
 }
 
-// Aplica uma textura ao objeto (carrega só na primeira vez) e liga o modo
-// Texturizado.
+// Aplica a textura (carrega só na primeira vez) e liga o modo Textura
 void aplicarTextura(const std::string& caminho) {
     Objeto3D* obj = objetoSelecionado();
     if (!obj) { mostrarErro("Abra um modelo .obj antes de aplicar a textura."); return; }
@@ -131,7 +124,7 @@ void aplicarTextura(const std::string& caminho) {
     redesenhar();
 }
 
-// --- Callbacks -------------------------------------------------------------
+// Callbacks
 
 void cbAbrirOBJ(int) {
     std::string caminho;
@@ -143,14 +136,13 @@ void cbAbrirOBJ(int) {
     std::string erro;
     if (!carregarOBJ(caminho, malha, erro)) { mostrarErro(erro); return; }
 
-    // Visualizador de um objeto: o modelo novo entra no lugar do anterior
-    // (material, modo e textura são mantidos); se não há nenhum, cria.
+    // O modelo novo substitui o anterior, mantendo material, modo e textura
     Objeto3D* obj = objetoSelecionado();
     if (!obj) {
         g_cena.push_back(Objeto3D());
         g_idSelecionado = (int)g_cena.size() - 1;
         obj = &g_cena.back();
-        // O primeiro modelo já nasce com o que estiver escolhido no painel.
+        // O primeiro modelo usa o que estiver escolhido no painel
         aplicarCor(*obj, s_cor);
         obj->mat.alpha     = s_alfa;
         obj->mat.shininess = s_brilho;
@@ -166,12 +158,11 @@ void cbAbrirOBJ(int) {
     redesenhar();
 }
 
-// Botão de uma textura da pasta: o id do botão é a posição em g_arquivosTextura.
 void cbTexturaDaPasta(int id) {
     if (id >= 0 && id < (int)g_arquivosTextura.size()) aplicarTextura(g_arquivosTextura[id]);
 }
 
-// "Outra imagem...": qualquer .png/.jpg/.bmp do computador (requisito 3d).
+// "Outra imagem...": qualquer .png/.jpg/.bmp do computador
 void cbOutraTextura(int) {
     if (!objetoSelecionado()) { mostrarErro("Abra um modelo .obj antes de aplicar a textura."); return; }
     std::string caminho;
@@ -231,7 +222,7 @@ void cbLuz(int) {
 
 void cbSair(int) { std::exit(0); }
 
-// --- Atalhos de layout --------------------------------------------------------
+// Atalhos de layout
 
 GLUI_Button* botao(GLUI_Panel* painel, const char* texto, int id, void (*cb)(int)) {
     GLUI_Button* b = g_glui->add_button_to_panel(painel, texto, id, cb);
@@ -256,21 +247,20 @@ void criarInterface(int janelaPrincipal) {
     g_glui = GLUI_Master.create_glui_subwindow(janelaPrincipal, GLUI_SUBWINDOW_RIGHT);
     for (int i = 0; i < 3; ++i) g_glui->bkgd_color[i] = COR_FUNDO[i];
 
-    // Cabeçalho
     GLUI_StaticText* titulo = g_glui->add_statictext("VISUALIZADOR 3D");
     titulo->set_alignment(GLUI_ALIGN_CENTER);
     GLUI_StaticText* sub = g_glui->add_statictext("Trabalho 2 - Computacao Grafica");
     sub->set_alignment(GLUI_ALIGN_CENTER);
     g_glui->add_separator();
 
-    // --- Modelo (requisitos 1, 2a e 5) ---------------------------------------
+    // Modelo
     GLUI_Rollout* rModelo = g_glui->add_rollout("Modelo", true);
     botao(rModelo, "Abrir modelo (.obj)...", 0, cbAbrirOBJ);
     g_txtNome = texto(rModelo);
     g_txtTri  = texto(rModelo);
     g_txtUV   = texto(rModelo);
 
-    // --- Textura (requisito 3d): um botão por imagem da pasta ---------------
+    // Textura: um botão por imagem da pasta
     GLUI_Rollout* rTex = g_glui->add_rollout("Textura", true);
     listarTexturas();
     for (int i = 0; i < (int)g_arquivosTextura.size(); ++i)
@@ -281,7 +271,7 @@ void criarInterface(int janelaPrincipal) {
     botao(rTex, "Sem textura (solido)", 0, cbSemTextura);
     g_txtTextura = texto(rTex);
 
-    // --- Visualização (requisitos 3a, 3c e 3d), lado a lado -----------------
+    // Visualização
     GLUI_Rollout* rVis = g_glui->add_rollout("Visualizacao", true);
     GLUI_Panel* pSh = g_glui->add_panel_to_panel(rVis, "Shading");
     GLUI_RadioGroup* gSh = g_glui->add_radiogroup_to_panel(pSh, &s_shading, 0, cbShading);
@@ -294,7 +284,7 @@ void criarInterface(int janelaPrincipal) {
     g_glui->add_radiobutton_to_group(gModo, "Textura");
     g_glui->add_radiobutton_to_group(gModo, "Reflexao");
 
-    // --- Material: cor do Sólido, transparência (3b) e brilho (3c) ----------
+    // Material: cor, opacidade e shininess
     GLUI_Rollout* rMat = g_glui->add_rollout("Material", true);
     GLUI_Listbox* lbCor = g_glui->add_listbox_to_panel(rMat, "Cor  ", &s_cor, 0, cbCor);
     for (int i = 0; i < NUM_CORES; ++i) lbCor->add_item(i, CORES[i].nome);
@@ -304,7 +294,7 @@ void criarInterface(int janelaPrincipal) {
     g_txtBrilho = texto(rMat, "Shininess");
     slider(rMat, &s_brilho, 0.0f, 128.0f, cbBrilho);
 
-    // --- Luz (requisito 2c) ----------------------------------------------------
+    // Luz
     GLUI_Rollout* rLuz = g_glui->add_rollout("Luz", true);
     g_glui->add_checkbox_to_panel(rLuz, "Ligada", &s_luzLigada, 0, cbLuz);
     const char* eixos[3] = { "Posicao X", "Posicao Y", "Posicao Z" };
@@ -330,16 +320,13 @@ bool abrirDialogo(const char* filtro, std::string& caminho, const char* pastaIni
     char pasta[MAX_PATH]  = "";
     if (pastaInicial) GetFullPathNameA(pastaInicial, MAX_PATH, pasta, nullptr);
 
-    // O diálogo pode mudar a pasta atual do programa para a pasta escolhida
-    // (a documentação avisa que OFN_NOCHANGEDIR não vale para o "Abrir").
-    // Se isso acontecer, os caminhos relativos ("assets/...") param de
-    // funcionar. Por isso a pasta atual é guardada e restaurada.
+    // Restaura a pasta atual, que o diálogo pode mudar
     char pastaAtual[MAX_PATH] = "";
     GetCurrentDirectoryA(MAX_PATH, pastaAtual);
 
     OPENFILENAMEA ofn = {};
     ofn.lStructSize     = sizeof(ofn);
-    ofn.hwndOwner       = GetActiveWindow();   // a caixa fica na frente da janela
+    ofn.hwndOwner       = GetActiveWindow();
     ofn.lpstrFilter     = filtro;
     ofn.lpstrFile       = buffer;
     ofn.nMaxFile        = MAX_PATH;
@@ -363,6 +350,6 @@ void sincronizarPainel() {
         s_brilho  = obj->mat.shininess;
     }
     s_luzLigada = g_luz.ligada ? 1 : 0;
-    g_glui->sync_live();   // copia as variáveis vivas para os controles
+    g_glui->sync_live();
     atualizarInfo();
 }

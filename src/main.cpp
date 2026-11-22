@@ -1,8 +1,3 @@
-// =============================================================================
-//  main.cpp — Trabalho 2 de Computação Gráfica (UNICAP, Prof. Robson Lins)
-//  Sistema Visualizador de Objetos 3D com OpenGL, GLUT e GLUI
-//  Equipe: Ana Beatriz, André Mota, Artur Uchôa e Isabel Lugon
-// =============================================================================
 #include "Common.h"
 #include "Interface.h"
 #include "Render.h"
@@ -11,14 +6,13 @@
 #include <algorithm>
 #include <cstdio>
 
-// Fundo em degradê (azul-acinzentado em cima, quase branco embaixo): um
-// retângulo do tamanho da tela, desenhado antes de tudo e sem profundidade.
+// Fundo em degradê, desenhado sem profundidade
 static void desenharFundo() {
     glPushAttrib(GL_ENABLE_BIT | GL_LIGHTING_BIT | GL_CURRENT_BIT);
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
-    glShadeModel(GL_SMOOTH);   // interpola as cores entre os cantos
+    glShadeModel(GL_SMOOTH);
     glMatrixMode(GL_PROJECTION); glPushMatrix(); glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);  glPushMatrix(); glLoadIdentity();
     glBegin(GL_QUADS);
@@ -41,14 +35,14 @@ static void display() {
     glRotatef(g_camera.rotX, 1, 0, 0);
     glRotatef(g_camera.rotY, 0, 1, 0);
 
-    configurarLuz(g_luz);  // depois da câmera: a luz fica fixa no mundo
+    configurarLuz(g_luz);  // depois da câmera: luz fixa no mundo
     desenharIndicadorLuz(g_luz);
     desenharCena();
 
     glutSwapBuffers();
 }
 
-// Requisito 2b: perspectiva + aspect ratio da área útil (descontando o painel)
+// Perspectiva com o aspect ratio da área sem o painel
 static void reshape(int, int) {
     int tx, ty, tw, th;
     GLUI_Master.get_viewport_area(&tx, &ty, &tw, &th);
@@ -62,22 +56,17 @@ static void reshape(int, int) {
     glutPostRedisplay();
 }
 
-// -----------------------------------------------------------------------------
-// Câmera com o mouse: botão esquerdo gira, botão direito ou roda aproxima
-// -----------------------------------------------------------------------------
+// Câmera: botão esquerdo gira; botão direito ou roda aproxima
 static int s_botao = -1;
 static int s_xAnt = 0, s_yAnt = 0;
 
 static void aproximar(float fator) {
-    // Multiplica em vez de somar: o zoom fica com a mesma "velocidade"
-    // de perto e de longe.
     g_camera.distancia = std::max(1.5f, std::min(30.0f, g_camera.distancia * fator));
     glutPostRedisplay();
 }
 
 static void mouse(int botao, int estado, int x, int y) {
-    // Sem callback de roda registrado, o freeglut entrega a roda do mouse
-    // como os botões 3 (para frente) e 4 (para trás).
+    // Roda do mouse chega como botões 3 e 4
     if (botao == 3 || botao == 4) {
         if (estado == GLUT_DOWN) aproximar(botao == 3 ? 0.9f : 1.1f);
         return;
@@ -94,8 +83,6 @@ static void movimento(int x, int y) {
 
     if (s_botao == GLUT_LEFT_BUTTON) {
         g_camera.rotY += dx * 0.5f;
-        // Limita a inclinação para a câmera não passar por cima e virar
-        // o modelo de cabeça para baixo.
         g_camera.rotX = std::max(-89.0f, std::min(89.0f, g_camera.rotX + dy * 0.5f));
         glutPostRedisplay();
     } else if (s_botao == GLUT_RIGHT_BUTTON) {
@@ -105,7 +92,7 @@ static void movimento(int x, int y) {
 
 static void inicializarGL() {
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_NORMALIZE);  // normais corretas mesmo com glScale
+    glEnable(GL_NORMALIZE);
     glShadeModel(GL_SMOOTH);
 }
 
@@ -118,17 +105,14 @@ int main(int argc, char** argv) {
 
     inicializarGL();
 
-    // Imagem do ambiente para a reflexão (requisito 3c). Carregada depois de
-    // criar a janela: a textura vai para o contexto OpenGL dela.
+    // Sphere map da reflexão (precisa da janela já criada)
     std::string erro;
     g_texSphereMap = carregarTextura("assets/texturas/spheremap.png", erro);
     if (g_texSphereMap == 0) std::printf("Aviso: %s\n", erro.c_str());
 
     glutDisplayFunc(display);
     glutMotionFunc(movimento);
-    // Com GLUI, os callbacks de reshape, mouse, teclado e idle são registrados
-    // pelo GLUI_Master, e antes de criar o painel (a janela atual ainda é a
-    // principal).
+    // Com GLUI, reshape e mouse são registrados pelo GLUI_Master
     GLUI_Master.set_glutReshapeFunc(reshape);
     GLUI_Master.set_glutMouseFunc(mouse);
 

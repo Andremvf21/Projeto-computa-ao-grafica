@@ -1,15 +1,9 @@
-// Textura.cpp — Responsável: Ana Beatriz (Sprints 1 e 2)
-#define STB_IMAGE_IMPLEMENTATION   // só aqui, em nenhum outro .cpp
+// Textura.cpp — imagens, sphere map e cor do material
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "Textura.h"
 
-// -----------------------------------------------------------------------------
-// Cada janela do GLUT tem o próprio contexto OpenGL, inclusive o painel da GLUI,
-// e uma textura criada em um contexto não existe nos outros. Quando o botão
-// "Abrir textura" for clicado, a janela atual será o painel; sem esta troca,
-// a textura iria para o painel e o objeto apareceria branco na janela principal.
-// O construtor troca para a janela principal e o destrutor devolve a anterior.
-// -----------------------------------------------------------------------------
+// Cada janela GLUT tem seu contexto OpenGL; a textura precisa ser criada na principal
 namespace {
 struct NaJanelaPrincipal {
     int anterior;
@@ -23,15 +17,10 @@ struct NaJanelaPrincipal {
 }
 
 GLuint carregarTextura(const std::string& caminho, std::string& erro) {
-    // No .obj, v = 0 é a parte de baixo da imagem. O arquivo de imagem guarda
-    // a linha de cima primeiro. Virando na leitura, as duas convenções batem
-    // e a textura não aparece de cabeça para baixo.
+    // No .obj, v = 0 é a base da imagem
     stbi_set_flip_vertically_on_load(1);
 
-    // O último argumento (4) pede sempre RGBA, qualquer que seja o arquivo:
-    // um formato só para .png, .jpg e .bmp, e o alfa fica disponível para a
-    // transparência (3b). Com 4 bytes por pixel, cada linha também tem tamanho
-    // múltiplo de 4, que é o alinhamento padrão que o OpenGL espera.
+    // Sempre RGBA
     int largura = 0, altura = 0, canaisNoArquivo = 0;
     unsigned char* pixels = stbi_load(caminho.c_str(), &largura, &altura, &canaisNoArquivo, 4);
     if (!pixels) {
@@ -47,20 +36,15 @@ GLuint carregarTextura(const std::string& caminho, std::string& erro) {
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
 
-    // REPEAT: UVs fora de 0..1 repetem a imagem (útil na madeira da mesa).
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    // Perto: interpola entre pixels. Longe: usa os mipmaps, o que evita o
-    // "chuvisco" nas listras do gato quando ele fica pequeno na tela.
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
-    // gluBuild2DMipmaps envia a imagem e gera as versões reduzidas (mipmaps).
-    // Também redimensiona imagens cujo lado não é potência de 2, então o
-    // usuário pode abrir qualquer foto pela interface.
+    // Gera os mipmaps e aceita lados que não são potência de 2
     GLint r = gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, largura, altura,
                                 GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-    stbi_image_free(pixels);  // a imagem já foi copiada para o OpenGL
+    stbi_image_free(pixels);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     if (r != 0) {
@@ -74,18 +58,8 @@ GLuint carregarTextura(const std::string& caminho, std::string& erro) {
     return id;
 }
 
-void liberarTextura(GLuint& id) {
-    if (id == 0) return;
-    NaJanelaPrincipal contexto;
-    glDeleteTextures(1, &id);
-    id = 0;
-}
-
 bool ligarTextura(const Objeto3D& obj) {
-    // Reflexão de ambiente (requisito 3c): o sphere map é uma foto de uma bola
-    // espelhada. Com GL_SPHERE_MAP, o OpenGL calcula a coordenada de textura de
-    // cada vértice a partir da normal e da direção da câmera, então a imagem
-    // "escorrega" pela superfície quando a câmera gira, como um reflexo.
+    // Reflexão: sphere map com coordenadas geradas pela normal e pela câmera
     if (obj.modo == MODO_REFLEXAO) {
         if (g_texSphereMap == 0) { glDisable(GL_TEXTURE_2D); return false; }
         glEnable(GL_TEXTURE_2D);
@@ -105,9 +79,7 @@ bool ligarTextura(const Objeto3D& obj) {
     }
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, obj.textura);
-    // MODULATE multiplica a cor da textura pela cor do material já iluminada.
-    // Assim a luz, o flat/smooth e o alfa continuam valendo no objeto
-    // texturizado. Com REPLACE a imagem ficaria "chapada", sem sombra.
+    // MODULATE: a textura é multiplicada pela cor iluminada
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     return true;
 }
@@ -125,9 +97,7 @@ void enviarUV(const Malha& m, const Triangulo& t, int i) {
         glTexCoord2f(m.uvs[k].u, m.uvs[k].v);
 }
 
-// -----------------------------------------------------------------------------
-// Cor do modo Sólido
-// -----------------------------------------------------------------------------
+// Cores do modo Sólido
 const CorNomeada CORES[] = {
     { "Cinza",      0.80f, 0.80f, 0.80f },
     { "Branco",     1.00f, 1.00f, 1.00f },
@@ -144,7 +114,6 @@ void aplicarCor(Objeto3D& obj, int indiceCor) {
     const CorNomeada& c = CORES[indiceCor];
     obj.cor = indiceCor;
     obj.mat.difusa[0] = c.r;  obj.mat.difusa[1] = c.g;  obj.mat.difusa[2] = c.b;
-    // A ambiente acompanha a cor (mais escura): o lado na sombra continua
-    // com o tom do objeto em vez de ficar cinza.
+    // Ambiente com o mesmo tom, mais escura
     obj.mat.ambiente[0] = c.r * 0.25f;  obj.mat.ambiente[1] = c.g * 0.25f;  obj.mat.ambiente[2] = c.b * 0.25f;
 }

@@ -1,19 +1,10 @@
-// =============================================================================
-//  Render — iluminação, shading, transparência e desenho da cena
-//  Responsável: Isabel Lugon         Requisitos: 2c, 3a, 3b, 3c
-// =============================================================================
+// Render.h — iluminação, shading e transparência
 #pragma once
 #include "Common.h"
 
-// Liga/desliga GL_LIGHT0 e posiciona a luz (chamar depois da câmera).
+// Chamar depois de posicionar a câmera.
 void configurarLuz(const Luz& luz);
 
-// Esferinha amarela na posição da luz.
 void desenharIndicadorLuz(const Luz& luz);
 
-// Desenha um objeto com seu material, shading e modo de visualização.
-void desenharObjeto(const Objeto3D& obj);
-
-// Desenha o objeto aberto. Se ele estiver transparente, usa GL_BLEND,
-// glDepthMask(GL_FALSE) e triângulos do mais longe ao mais perto.
 void desenharCena();

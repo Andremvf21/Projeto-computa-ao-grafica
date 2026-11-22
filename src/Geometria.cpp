@@ -1,4 +1,4 @@
-// Geometria.cpp — normais, coordenadas de textura e malhas procedurais
+// Geometria.cpp — normalização, normais e coordenadas de textura
 #include "Geometria.h"
 #include <algorithm>
 
@@ -14,9 +14,7 @@ void caixaEnvolvente(const Malha& m, Vec3& mn, Vec3& mx) {
     }
 }
 
-// Ângulo em volta do eixo Y convertido para 0..1.
-// atan2(x, z) vale 0 na frente (+Z) e ±PI atrás (-Z): assim a "costura",
-// onde u volta de 1 para 0, fica nas costas do modelo, longe da câmera.
+// Ângulo em volta de Y em 0..1; a costura fica nas costas (-Z).
 float anguloU(const Vec3& p) {
     return 0.5f + std::atan2(p.x, p.z) / (2.0f * PI);
 }
@@ -25,9 +23,7 @@ float anguloU(const Vec3& p) {
 void normalizarMalha(Malha& m) {
     if (m.vertices.empty()) return;
 
-    // Usa o centro da caixa envolvente, e não a média dos vértices: a média
-    // puxa o centro para onde a malha é mais detalhada (a cabeça do gato,
-    // por exemplo) e o modelo ficaria fora do centro da tela.
+    // Centro da caixa envolvente (a média dos vértices puxaria para as partes mais detalhadas)
     Vec3 mn, mx;
     caixaEnvolvente(m, mn, mx);
     Vec3 centro = (mn + mx) * 0.5f;
@@ -39,13 +35,8 @@ void normalizarMalha(Malha& m) {
     }
     if (raio < 1e-8f) raio = 1.0f;
 
-    // Escala para raio 1: qualquer modelo, de qualquer tamanho no arquivo,
-    // aparece do mesmo tamanho com a câmera na distância padrão.
     float s = 1.0f / raio;
     for (Vec3& v : m.vertices) v = v * s;
-
-    m.centro = Vec3(0, 0, 0);
-    m.raio = 1.0f;
 }
 
 void calcularNormais(Malha& m) {
@@ -56,23 +47,17 @@ void calcularNormais(Malha& m) {
         const Vec3& b = m.vertices[t.v[1]];
         const Vec3& c = m.vertices[t.v[2]];
 
-        // Com os vértices em sentido anti-horário, o produto vetorial aponta
-        // para fora. O comprimento dele é o dobro da área do triângulo.
         Vec3 n = cross(b - a, c - a);
-        t.normalFace = n.normalizado();   // Flat: uma normal por face
+        t.normalFace = n.normalizado();
 
-        // Smooth: soma sem normalizar, então faces maiores pesam mais na
-        // média. Triângulos degenerados (área zero) não atrapalham.
+        // Soma sem normalizar: faces maiores pesam mais na média
         for (int i = 0; i < 3; ++i) m.normaisVertice[t.v[i]] += n;
     }
     for (Vec3& n : m.normaisVertice) n = n.normalizado();
 }
 
 void gerarUV(Malha& m) {
-    // A UV é gerada por canto de triângulo (3 por triângulo), e não por
-    // vértice. Assim um vértice na costura pode ter u perto de 0 num
-    // triângulo e perto de 1 no vizinho, sem a faixa esticada que aparece
-    // quando um triângulo atravessa a costura.
+    // Uma UV por canto de triângulo, para tratar a costura sem esticar a textura
     m.uvs.clear();
     m.uvs.reserve(m.triangulos.size() * 3);
 
@@ -80,8 +65,7 @@ void gerarUV(Malha& m) {
         Vec2 uv[3];
         bool semAngulo[3] = { false, false, false };
 
-        // Projeção esférica a partir do centro (o modelo já está normalizado
-        // em volta da origem): u = ângulo em volta do eixo Y, v = altura angular.
+        // u = ângulo em volta de Y, v = latitude
         for (int i = 0; i < 3; ++i) {
             const Vec3& p = m.vertices[t.v[i]];
             float r = std::max(p.comprimento(), 1e-8f);
@@ -90,9 +74,7 @@ void gerarUV(Malha& m) {
             semAngulo[i] = std::sqrt(p.x * p.x + p.z * p.z) < 1e-5f;  // polo
         }
 
-        // Costura: se os u do triângulo estão a mais de meia volta de
-        // distância, ele atravessa a costura. Soma 1 aos que estão perto
-        // de 0 (o GL_REPEAT da textura trata u > 1 como continuação).
+        // Triângulo na costura: soma 1 aos u perto de 0 (GL_REPEAT)
         float uMin = 2, uMax = -1;
         for (int i = 0; i < 3; ++i)
             if (!semAngulo[i]) { uMin = std::min(uMin, uv[i].u); uMax = std::max(uMax, uv[i].u); }
@@ -100,7 +82,7 @@ void gerarUV(Malha& m) {
             for (int i = 0; i < 3; ++i)
                 if (!semAngulo[i] && uv[i].u < 0.5f) uv[i].u += 1.0f;
 
-        // No polo o ângulo não existe: usa a média dos outros cantos.
+        // No polo, u é a média dos outros cantos
         float soma = 0; int n = 0;
         for (int i = 0; i < 3; ++i) if (!semAngulo[i]) { soma += uv[i].u; ++n; }
         for (int i = 0; i < 3; ++i) if (semAngulo[i]) uv[i].u = n ? soma / n : 0.5f;
